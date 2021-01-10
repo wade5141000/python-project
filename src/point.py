@@ -1,8 +1,8 @@
 # 507170536 吳韋德 
 # 507170524 張亞亭
 
-
-
+import warnings
+warnings.filterwarnings('ignore') # 隱藏警告訊息
 # 找出綜合評分最高的影片
 def comprehensive(country):
     

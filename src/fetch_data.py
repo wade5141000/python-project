@@ -12,6 +12,7 @@ import os
 from google_trans_new import google_translator
 from IPython.display import display
 from IPython.display import clear_output as clear
+import warnings
 
 csv_df = None # 使用全域變數紀錄讀取的資料，方便其他 functon 使用
 category_mapping = {} # 紀錄影片類別的字典 { id:類別 }
@@ -60,7 +61,7 @@ def loadData(country):
     if country=='ALL':
         all_country_data =[]
         path = os.getcwd() + '\\data' # 設定資料的資料夾路徑
-        path = os.path.abspath(path)  # 讀取指定資料夾內所有的 csv 路徑
+        path = os.path.abspath(path)  # 設定資料夾路徑
         csv_paths = glob.glob(os.path.join(path, '*.csv')) # 讀取指定資料夾內所有的 csv 路徑組成 list
         print('已從 data 資料夾中讀取影片資料，資料處理中...\n')
         # 使用 for in 讀取每個 csv，在使用 concat 方法將所有 dataframe 接起來
@@ -83,31 +84,31 @@ def loadData(country):
             
             all_country_data.append(temp_csv_df)
         csv_df = pd.concat(all_country_data) # 將每個國家的 dataframe 資料組合起來
-        print('========================================================================================================\n')
+        print('------------------------------------------------------------------')
         total = len(csv_df.index) # 原始資料量
-        print('\n讀取' + country_mapping_revert[country] +'的影片資料，資料數量： ' + format(total,','))
-        print('\n========================================================================================================\n')
+        print('讀取' + country_mapping_revert[country] +'的影片資料，資料數量： ' + format(total,','))
+        print('------------------------------------------------------------------')
         new_total = remove_duplicates() # 移除重複的資料
         print('移除重複的資料，新的資料數量：' + format(new_total,','))
-        print('\n========================================================================================================\n')
+        print('------------------------------------------------------------------')
         interact(show_top_n, properties=dict(觀看次數='views', 喜歡='likes', 不喜歡='dislikes', 留言數='comment_count'),
          top_n=(1,20), sort=dict(遞增=False, 遞減=True)) # 建立一個下拉選單，可以選擇屬性、資料筆數、排序方式，最後過濾出資料
     else:
         path = 'data/' + country + 'videos.csv'
         # 因為有多個語系，要設定 encoding = utf-8；原始資料某幾列的資料欄位數不對，會無法讀取，因此增加 error_bad_lines 忽略錯誤欄位
         csv_df = pd.read_csv(path, encoding = 'utf-8', sep=',', error_bad_lines=False) # 讀取 csv
-        print('========================================================================================================\n')
+        print('------------------------------------------------------------------')
         total = len(csv_df.index) # 原始資料量
         print('讀取' + country_mapping_revert[country] +'的影片資料，資料數量： ' + format(total,','))
-        print('\n========================================================================================================\n')
+        print('------------------------------------------------------------------')
         new_total = remove_duplicates() # 移除重複的資料
         
         print('移除重複的資料，新的資料數量：' + format(new_total,','))
-        print('\n========================================================================================================\n')
+        print('------------------------------------------------------------------')
         # 集中程度計算：(原始資料量 - 去重複後資料量) / 原始資料量 * 100
         concentrated = round(((total - new_total) / total) * 100, 2)
         print('熱門影片集中程度：' + str(concentrated) + '%')
-        print('\n========================================================================================================\n')
+        print('------------------------------------------------------------------')
         interact(show_top_n, properties=dict(觀看次數='views', 喜歡='likes', 不喜歡='dislikes', 留言數='comment_count'),
          top_n=(1,20), sort=dict(遞增=False, 遞減=True)) # 建立一個下拉選單，可以選擇屬性、資料筆數、排序方式，最後過濾出資料
 
